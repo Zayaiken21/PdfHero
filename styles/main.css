@@ -1,0 +1,276 @@
+/* ══════════════════════════════════════════════════════════════════
+   PDF HERO · Storm theme
+   — mini lightning-bolt field across the whole screen (staggered,
+     card-style pattern; drifts upward and sways direction)
+   — every text container wraps: nothing leaks out of its box
+   — responsive clamps so phones, tablets, and desktop all fit
+   ══════════════════════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --bolt: #38BDF8; --bolt-2: #22D3EE; --bolt-3: #67E8F9; --bolt-deep: #0EA5E9;
+  --violet: #818CF8; --mint: #34D399; --amber: #FBBF24; --rose: #FB7185;
+  --ink-0: #04070F; --ink-1: #0A1222; --ink-2: #10203B;
+  --line: rgba(56,189,248,.22); --line-str: rgba(56,189,248,.5);
+  --text: #EAF2FF; --muted: #9DB2D4;
+}
+
+/* ── universal containment: text stays inside its box, everywhere ── */
+*, *::before, *::after { box-sizing: border-box; }
+.stApp h1, .stApp h2, .stApp h3, .stApp h4, .stApp h5,
+.stApp p, .stApp li, .stApp label, .stApp span, .stApp td, .stApp th,
+.stApp [data-testid="stMarkdownContainer"] *,
+.stApp [data-testid="stCaptionContainer"] *,
+div[data-testid="stMetricLabel"], div[data-testid="stMetricValue"],
+div[data-testid="stExpander"] summary, div[data-testid="stExpander"] summary p {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  min-width: 0;
+}
+img, svg, video, canvas, iframe { max-width: 100%; }
+div[data-testid="stExpander"] summary { white-space: normal; }
+[data-testid="stSidebarNav"] a span { white-space: normal; }
+div[data-testid="column"] { min-width: 0; }
+
+/* ── living storm background ─────────────────────────────────────── */
+.stApp {
+  background: linear-gradient(-45deg,#04070F,#0A1B36,#06122A,#0C1E44,#081226,#04070F);
+  background-size: 500% 500%;
+  animation: storm 30s ease infinite;
+  color: var(--text); font-family: 'Inter', sans-serif;
+}
+@keyframes storm { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+
+/* soft aurora glow (subtle, behind everything) */
+.stApp::before {
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(46rem 28rem at 84% -10%, rgba(56,189,248,.16), transparent 60%),
+    radial-gradient(40rem 24rem at 6% 110%, rgba(129,140,248,.13), transparent 60%);
+  animation: aurora 18s ease-in-out infinite alternate;
+}
+@keyframes aurora { from{opacity:.55} to{opacity:.95} }
+
+/* ── MINI BOLT FIELD ──────────────────────────────────────────────
+   Two repeating tiles fill the ENTIRE screen with small bolts in a
+   staggered diamond layout (like a patterned bank card):
+        ⚡
+     ⚡     ⚡
+        ⚡
+   Both layers drift upward together and sway left/right, changing
+   direction at intervals. Low opacity + fixed + behind content, so it
+   never gets in the way. End positions are exact tile multiples, so
+   the loop is seamless. */
+.stApp::after {
+  content:""; position:fixed; inset:-40px; pointer-events:none; z-index:0; opacity:.13;
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='168' height='208' viewBox='0 0 168 208'><g fill='none' stroke='%2338BDF8' stroke-width='1.6' stroke-linejoin='round'><path transform='translate(73,16)' d='M11 1 L6 14 L10 14 L5 31 L19 12 L13 12 L17 1 Z'/><path transform='translate(10,120)' d='M11 1 L6 14 L10 14 L5 31 L19 12 L13 12 L17 1 Z'/></g></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='236' height='288' viewBox='0 0 236 288'><g fill='none' stroke='%2322D3EE' stroke-width='1.3' stroke-linejoin='round'><path transform='translate(150,52)' d='M13 1 L7 17 L12 17 L6 38 L23 15 L16 15 L21 1 Z'/><path transform='translate(38,196)' d='M13 1 L7 17 L12 17 L6 38 L23 15 L16 15 L21 1 Z'/></g></svg>");
+  background-repeat: repeat, repeat;
+  background-position: 0px 0px, 0px 0px;
+  animation: boltdrift 26s linear infinite;
+}
+@keyframes boltdrift {
+  0%   { background-position: 0px 0px,      0px 0px; }
+  22%  { background-position: 26px -180px,  -20px -250px; }
+  46%  { background-position: -18px -372px, 24px -520px; }
+  72%  { background-position: 30px -584px,  -26px -806px; }
+  100% { background-position: 0px -832px,   0px -1152px; }
+}
+
+/* keep real content above the storm */
+.main .block-container, section[data-testid="stSidebar"] > div,
+header[data-testid="stHeader"] { position: relative; z-index: 1; }
+
+.block-container {
+  padding-left: clamp(.85rem, 3vw, 3rem);
+  padding-right: clamp(.85rem, 3vw, 3rem);
+  padding-top: clamp(1.6rem, 4vw, 3.2rem);
+  max-width: 1200px;
+}
+
+section[data-testid="stSidebar"] {
+  background: linear-gradient(180deg, var(--ink-1), var(--ink-0));
+  border-right: 1px solid var(--line-str);
+  box-shadow: 2px 0 24px rgba(56,189,248,.08);
+}
+.ph-workspace {
+  padding:.5rem .7rem; border-radius:12px; margin:.2rem 0 .5rem;
+  background:rgba(56,189,248,.10); border:1px solid var(--line);
+  font-size:.92rem;
+}
+
+h1,h2,h3,h4 { font-family:'Sora',sans-serif !important; color:var(--text); letter-spacing:-.01em; }
+h2 { font-size: clamp(1.15rem, 3.4vw, 1.4rem); }
+h3 { font-size: clamp(1.02rem, 3vw, 1.15rem); }
+
+/* ── hero ─────────────────────────────────────────────────────────── */
+.si-hero {
+  position:relative; padding: clamp(1.05rem, 3vw, 1.7rem) clamp(1.05rem, 3.2vw, 1.9rem) clamp(1rem, 2.6vw, 1.5rem);
+  border-radius:20px; border:1px solid var(--line-str);
+  background:linear-gradient(135deg, rgba(56,189,248,.16), rgba(10,27,54,.78) 45%, rgba(129,140,248,.14));
+  overflow:hidden; margin-bottom:1.1rem;
+  box-shadow:0 0 60px rgba(56,189,248,.12) inset, 0 8px 40px rgba(0,0,0,.4);
+}
+.si-hero::after {
+  content:""; position:absolute; top:0; left:-60%; width:50%; height:100%;
+  background:linear-gradient(105deg, transparent, rgba(103,232,249,.26), transparent);
+  animation:streak 5.5s ease-in-out infinite;
+}
+@keyframes streak { 0%,12%{left:-60%} 55%,100%{left:135%} }
+.si-kicker { font-size:.72rem; letter-spacing:.22em; font-weight:700; color:var(--bolt-3); text-transform:uppercase; }
+.si-kicker::before { content:"⚡ "; }
+.si-hero h1 {
+  font-size: clamp(1.42rem, 5.4vw, 2.15rem);
+  margin:.3rem 0 .35rem; font-weight:800; line-height:1.12;
+  background:linear-gradient(90deg,#FFFFFF,var(--bolt-3) 45%,var(--bolt));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  text-shadow:0 0 30px rgba(56,189,248,.3);
+}
+.si-hero p { color:#C4D6F5; margin:0; max-width:66ch; font-size:clamp(.9rem, 2.6vw, 1.02rem); line-height:1.5; }
+
+/* ── cards ────────────────────────────────────────────────────────── */
+.si-card {
+  position:relative; border-radius:16px; padding:1rem 1.1rem; margin-bottom:.8rem;
+  background:linear-gradient(160deg, rgba(16,32,59,.9), rgba(10,18,34,.94));
+  border:1px solid var(--line); backdrop-filter:blur(8px);
+  transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+  overflow:hidden; max-width:100%;
+}
+.si-card::before {
+  content:""; position:absolute; left:0; top:0; bottom:0; width:3px;
+  background:linear-gradient(180deg,var(--bolt),var(--bolt-2),var(--violet));
+  box-shadow:0 0 14px rgba(56,189,248,.7);
+}
+.si-card:hover { transform:translateY(-3px); border-color:var(--line-str);
+  box-shadow:0 10px 40px rgba(56,189,248,.2), 0 0 0 1px rgba(56,189,248,.3); }
+.si-card h4 { margin:0 0 .1rem; font-size:1.04rem; }
+.si-meta { color:var(--muted); font-size:.84rem; }
+
+.si-detail {
+  border-left:2px solid var(--bolt); padding:.2rem 0 .2rem .85rem; margin:.4rem 0;
+  box-shadow:-8px 0 22px -12px rgba(56,189,248,.6);
+}
+.si-title-idea {
+  font-weight:600; color:#E4F1FF; font-size:.96rem; line-height:1.4;
+  padding:.5rem .72rem; border-radius:11px; margin:.3rem 0;
+  background:linear-gradient(90deg, rgba(56,189,248,.16), rgba(56,189,248,.04));
+  border:1px solid rgba(56,189,248,.3);
+}
+.si-title-idea::before { content:"📄 "; }
+.si-desc {
+  color:#C9DAF6; font-size:.92rem; line-height:1.55; margin:.4rem 0 .2rem;
+  padding:.55rem .75rem; border-radius:11px; background:rgba(8,16,32,.55);
+  border:1px dashed rgba(56,189,248,.25);
+}
+.si-desc::before { content:"💡 What it could be — "; color:var(--bolt-3); font-weight:600; }
+
+/* ── score badges ─────────────────────────────────────────────────── */
+.si-score { font-family:'Sora'; font-weight:700; font-size:.9rem; padding:.22rem .68rem; border-radius:999px; white-space:nowrap; }
+.si-score.hot { color:#04121F; background:linear-gradient(90deg,var(--bolt),var(--bolt-2)); animation:pulse 2.4s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{box-shadow:0 0 8px rgba(56,189,248,.6)} 50%{box-shadow:0 0 22px rgba(34,211,238,.95)} }
+.si-score.strong { color:#04201A; background:linear-gradient(90deg,var(--mint),#6EE7B7); }
+.si-score.viable { color:#241A02; background:linear-gradient(90deg,var(--amber),#FCD34D); }
+.si-score.weak   { color:var(--muted); background:var(--ink-2); border:1px solid var(--line); }
+
+/* ── chips ────────────────────────────────────────────────────────── */
+.si-chip { display:inline-block; padding:.16rem .58rem; margin:.15rem .2rem .15rem 0; border-radius:999px;
+  font-size:.79rem; color:var(--text); background:var(--ink-2); border:1px solid var(--line); transition:.2s;
+  max-width:100%; }
+.si-chip:hover { border-color:var(--bolt); box-shadow:0 0 10px rgba(56,189,248,.3); }
+.si-chip.accent { color:var(--bolt-3); border-color:var(--line-str); background:rgba(56,189,248,.1); }
+.si-chip.rise { color:var(--mint); border-color:rgba(52,211,153,.45); }
+.si-chip.geo  { color:var(--amber); border-color:rgba(251,191,36,.4); background:rgba(251,191,36,.08); }
+.si-chip.geo::before { content:"🌍 "; }
+
+/* keyword cloud: compact, contained, wraps forever without overflow */
+.si-cloud {
+  line-height:1.9; padding: .9rem 1rem; border-radius:16px;
+  background:rgba(10,18,34,.75); border:1px solid var(--line);
+  max-width:100%; overflow:hidden;
+}
+.si-cloud span { margin-right:.6rem; display:inline-block; max-width:100%;
+  transition:text-shadow .2s; }
+.si-cloud span:hover { text-shadow:0 0 14px rgba(56,189,248,.95); }
+
+/* ── widgets ──────────────────────────────────────────────────────── */
+.stButton>button, .stFormSubmitButton>button, .stDownloadButton>button {
+  border-radius:12px; border:1px solid var(--line); background:var(--ink-2); color:var(--text);
+  font-weight:600; transition:all .22s ease;
+  white-space:normal; line-height:1.25; height:auto; min-height:2.4rem;
+}
+.stButton>button:hover, .stFormSubmitButton>button:hover, .stDownloadButton>button:hover {
+  border-color:var(--bolt); color:var(--bolt-3); box-shadow:0 0 18px rgba(56,189,248,.3); transform:translateY(-1px);
+}
+.stButton>button[kind="primary"], .stFormSubmitButton>button[kind="primary"] {
+  background:linear-gradient(90deg,var(--bolt-deep),var(--bolt-2)); color:#04121F; border:none; font-weight:800;
+  box-shadow:0 4px 22px rgba(56,189,248,.4);
+}
+.stButton>button[kind="primary"]:hover, .stFormSubmitButton>button[kind="primary"]:hover {
+  box-shadow:0 6px 32px rgba(34,211,238,.6); transform:translateY(-2px);
+}
+
+div[data-testid="stMetric"] {
+  background:linear-gradient(160deg, rgba(16,32,59,.85), rgba(10,18,34,.9));
+  border:1px solid var(--line); border-radius:14px; padding:.75rem .85rem;
+  box-shadow:0 2px 16px rgba(0,0,0,.25); min-width:0;
+}
+div[data-testid="stMetricValue"] {
+  font-family:'Sora'; color:var(--bolt-3); text-shadow:0 0 16px rgba(56,189,248,.35);
+  font-size: clamp(1rem, 4vw, 1.55rem) !important;
+}
+div[data-testid="stMetricLabel"] { color:var(--muted); font-size:.8rem; }
+
+div[data-testid="stExpander"] {
+  border:1px solid var(--line); border-radius:14px; margin-bottom:.5rem;
+  background:rgba(10,18,34,.6); backdrop-filter:blur(6px); transition:border-color .2s;
+  max-width:100%; overflow:hidden;
+}
+div[data-testid="stExpander"]:hover { border-color:var(--line-str); }
+div[data-testid="stExpander"] summary { font-weight:600; font-size:.95rem; }
+div[data-testid="stExpander"] summary:hover { color:var(--bolt-3); }
+
+.stProgress > div > div > div {
+  background:linear-gradient(90deg,var(--bolt-deep),var(--bolt-2),var(--bolt-3),var(--bolt));
+  background-size:200% 100%; animation:charge 1.4s linear infinite; box-shadow:0 0 14px rgba(56,189,248,.6);
+}
+@keyframes charge { from{background-position:0% 0} to{background-position:200% 0} }
+
+.stTabs [data-baseweb="tab-list"] { gap:.3rem; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+.stTabs [data-baseweb="tab"] { border-radius:11px 11px 0 0; background:rgba(16,32,59,.6);
+  border:1px solid var(--line); border-bottom:none; padding:.38rem .8rem; white-space:normal; }
+.stTabs [aria-selected="true"] { background:rgba(56,189,248,.16) !important; color:var(--bolt-3) !important;
+  box-shadow:0 -2px 12px rgba(56,189,248,.25); }
+
+/* dataframe — contained, never bleeds past its border */
+div[data-testid="stDataFrame"] { border:1px solid var(--line); border-radius:14px; overflow:hidden; max-width:100%; }
+div[data-testid="stDataFrame"] * { font-size:.85rem !important; }
+
+/* inputs */
+div[data-baseweb="select"] > div, .stTextInput input, .stTextArea textarea, .stNumberInput input {
+  border-radius:11px !important; border-color:var(--line) !important; background:rgba(10,18,34,.7) !important;
+}
+.stTextInput input:focus, div[data-baseweb="select"]:focus-within > div {
+  border-color:var(--bolt) !important; box-shadow:0 0 0 2px rgba(56,189,248,.25) !important;
+}
+
+a { color:var(--bolt-3) !important; overflow-wrap:anywhere; }
+hr { border-color:var(--line); }
+.stAlert { border-radius:13px; border:1px solid var(--line); backdrop-filter:blur(4px); }
+.stAlert p { overflow-wrap:anywhere; }
+
+/* ── phone-size fit ───────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .block-container { padding-left:.8rem; padding-right:.8rem; }
+  .si-hero { border-radius:16px; }
+  .si-cloud { line-height:1.75; padding:.7rem .8rem; }
+  .si-title-idea { font-size:.9rem; }
+  .si-desc { font-size:.87rem; }
+  div[data-testid="stExpander"] summary { font-size:.88rem; }
+  .stApp::after { opacity:.10; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stApp, .stApp::before, .stApp::after, .si-hero::after, .si-score.hot,
+  .stProgress>div>div>div { animation:none !important; }
+}

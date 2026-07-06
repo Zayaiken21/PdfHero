@@ -15,6 +15,6 @@ pytrends>=4.9.2
 
 # ---- Optional heavy NLP (uncomment locally / on VPS for richer extraction) ----
 # The app auto-detects these and falls back gracefully when absent.
-# spacy>=3.7            # then run: python -m spacy download en_core_web_sm
-# keybert>=0.8
-# sentence-transformers>=2.5
+spacy>=3.7            # then run: python -m spacy download en_core_web_sm
+keybert>=0.8
+sentence-transformers>=2.5
